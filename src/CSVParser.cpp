@@ -57,13 +57,13 @@ int main()
 {
 	std::vector<std::string> *a = ParseFile("/home/cuser/Desktop/CSVParseFinal/Food_Inspections.csv");
     
-    assert(a->size() == 219702); // num lines in food_inspections
+    assert(a->size() == 219748); // num lines in food_inspections
 
-    assert(FindStringInCSV(a, "Risk 1 (High)") == 157553);
+    assert(FindStringInCSV(a, "Risk 1 (High)") == 157581);
 
-    assert(FindStringInCSV(a, "Risk 2 (Medium)") == 42602);
+    assert(FindStringInCSV(a, "Risk 2 (Medium)") == 42613);
 
-    assert(FindStringInCSV(a, "Risk 3 (Low)") == 19439);
+    assert(FindStringInCSV(a, "Risk 3 (Low)") == 19446);
     
     delete(a);
     return 0;
