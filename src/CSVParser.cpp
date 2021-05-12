@@ -1,7 +1,13 @@
 #include "CSVParser.h"
 #include <cassert>
 
-std::vector<std::string> ParseFile(const std::string &path) 
+int riskOneCount = 0;
+
+int riskTwoCount = 0;
+
+int riskThreeCount = 0;
+
+std::vector<std::string> *ParseFile(const std::string &path) 
 {
 	std::fstream fileStream;
 
@@ -12,49 +18,54 @@ std::vector<std::string> ParseFile(const std::string &path)
 
 	std::string line;
 
-	std::vector<std::string> lines = std::vector<std::string>();		
+	std::vector<std::string> *lines = new std::vector<std::string>();	
 
+    int index = 0;
 	while (getline(fileStream, line)) // parsing into string happens here until filestream is empty
     {		
-		lines.push_back(line); // add the next line into vector	
+		lines->push_back(line); // add the next line into vector	
+        index++;
 	}
 
 	return lines;
 }
 
-int FindStringInCSV(std::string &csv, std::string &subString)
+int FindStringInCSV(std::vector<std::string> *a, std::string searchWord)
 {
-	int csvLength = csv.size();
+	int searchWordSize = searchWord.size();
 
-	int subStringLength = subString.length();
-	
-	int res = 0;
+    int count = 0;
 
-	/* A loop to slide pat[] one by one */
-    for (int i = 0; i <= subStringLength - csvLength; i++)
+    for (std::vector<std::string>::iterator iter = a->begin(); iter != a->end(); ++iter) 
     {
-        /* For current index i, check for
-           pattern match */
-        int j;
-        for (j = 0; j < csvLength; j++)
-            if (subString[i+j] != csv[j])
-                break;
-  
-        // if pat[0...M-1] = txt[i, i+1, ...i+M-1]
-        if (j == csvLength) 
+        for (size_t pos = 0; pos < (*iter).length(); pos += searchWordSize) 
         {
-           res++;
-           j = 0;
+            pos = (*iter).find(searchWord, pos);
+
+            if (pos != std::string::npos) 
+                ++count;                
+            else break;
         }
     }
-    return res;
+
+
+    std::cout << searchWord + " Count:" << count << std::endl;
+    return count;
 }
 
 int main()
 {
-	std::string a = ParseFile("/home/cuser/Desktop/CSVFinal/food.csv").at(6);
-    std::string txt = "dhimanman";
-    std::string pat = "man";
-    std::cout << a <<std::endl;
+	std::vector<std::string> *a = ParseFile("/home/cuser/Desktop/CSVParseFinal/Food_Inspections.csv");
+    
+    assert(a->size() == 219702); // num lines in food_inspections
+
+    assert(FindStringInCSV(a, "Risk 1 (High)") == 157553);
+
+    assert(FindStringInCSV(a, "Risk 2 (Medium)") == 42602);
+
+    assert(FindStringInCSV(a, "Risk 3 (Low)") == 19439);
+    
+    delete(a);
     return 0;
 }
+
